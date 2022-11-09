@@ -27,6 +27,8 @@ class Vaenlane: #Seekord proovin teha vaenlaste klassi, mis sisaldab vaenlast v�
     def bedone(self, meetod): #Funktsioon, mis määrab ära mangija mõju vaenlasele.
         tegu = random.randint(1,100) #Muutuja tegu väärtus on juhuslikult üks kuni sada.
         global text #Toon muutuja text sisse globaalse väärtusena, et muutuks tekst võitluse ajal.
+        global turn
+        turn = 0
         if meetod == 'attack': #Kui mangija ründab.
             if self.raskus == "kerge": #Kui raskusaste on kerge, siis...
                 if tegu >= 70: #On nii suur võimalus vaenlasele palju kahju teha.
@@ -101,38 +103,16 @@ class Vaenlane: #Seekord proovin teha vaenlaste klassi, mis sisaldab vaenlast v�
         if meetod == 'run': #Kui mangija jookseb ära...
             global aktiivne #Toos sisse muutuja aktiivne, mille väärtus sätitakse õnnestumise korral nulliks.
             tegu = random.randint(1,100) #Muudan muutujat tegu, et ära määrata, kas ära jooksmine õnnestus või mitte.
-            if self.raskus == 'kerge': #Väärtused sõltuvad vaenlase raskusastmest.
-                if tegu <= 60:
-                    text = 'Sul õnnestus ära joosta. Võitlus on lõppenud.' #Muudetakse ekraaniteksti
-                    stage = 'overworld'
-                    cooldown = 10000
-                    aktiivne = 0
-                    return text
-                else:
-                    text = 'Sul ebaõnnestus ära joosta. Võitlus kestab edasi.' #Muudetakse ekraaniteksti
-                    return text
-            if self.raskus == 'keskmine':
-                if tegu <= 40:
-                    text = 'Sul õnnestus ära joosta. Võitlus on lõppenud.' #Muudetakse ekraaniteksti
-                    stage = 'overworld'
-                    cooldown = 10000
-                    aktiivne = 0
-                    return text
-                else:
-                    text = 'Sul ebaõnnestus ära joosta. Võitlus kestab edasi.' #Muudetakse ekraaniteksti
-                    return text
-            if self.raskus == 'raske':
-                if tegu <= 20:
-                    text = 'Sul õnnestus ära joosta. Võitlus on lõppenud.' #Muudetakse ekraaniteksti
-                    stage = 'overworld'
-                    cooldown = 10000
-                    aktiivne = 0
-                    return text
-                else:
-                    text = 'Sul ebaõnnestus ära joosta. Võitlus kestab edasi.' #Muudetakse ekraaniteksti
-                    return text
-            if self.raskus == 'boss':
-                text = 'Bossi eest on võimatu ära joosta. Sa pead võitlema!' #Muudetakse ekraaniteksti
+            global stage
+            global aktiivne
+            if tegu <= 60:
+                text = 'Sul õnnestus ära joosta. Võitlus on lõppenud.' #Muudetakse ekraaniteksti
+                stage = 'overworld'
+                cooldown = 10000
+                aktiivne = 0
+                return text
+            else:
+                text = 'Sul ebaõnnestus ära joosta. Võitlus kestab edasi.' #Muudetakse ekraaniteksti
                 return text
         if meetod == 'heal': #Kui mangija võtab aega, et terveneda...
             tegu = random.randint(1,100) #Muudan muutuja tegu väärtust, et ära määrata, kui palju mangija paraneb.
@@ -150,6 +130,8 @@ class Vaenlane: #Seekord proovin teha vaenlaste klassi, mis sisaldab vaenlast v�
     def attack(self):
         tegu = random.randint(1,100)
         global text
+        global turn
+        turn = 1
         if self.raskus == 'kerge':
             if tegu <= 45:
                 text = self.nimi+' püüdis sind rünnata, kuid sa hüppasid kõrvale.' #Muudetakse ekraaniteksti
@@ -346,7 +328,7 @@ try:
                 if k.type == QUIT: #Kui vajutad ristist kinni, läheb mang kinni.
                     stage = 'quit'
                 if k.type == KEYDOWN: #See sätib ära, mis juhtub siis, kui klahvi hoitakse all.
-                    if cooldown != 0:
+                    if cooldown == 0:
                         if k.key == K_RIGHT or k.key == K_d: #Kui see on parem nooleklahv, siis pilt liigub paremale.
                             if turn == 1:
                                 aktiivne.bedone('heal')
@@ -385,7 +367,7 @@ try:
                 aken.blit(vaenlane.pilt, [int(900/2-55/2), int(900/2-84/2)])
             aken.blit(font['40'].render(text, 1, [0, 0, 0]), [10, 700])
             if player['hp'] > player['maxhp']:
-                player['hp'] = playerw['maxhp']
+                player['hp'] = player['maxhp']
             näitastaatust(1)
             display.flip() #Uuendan ekraani.
             if aktiivne.hp <= 0 and cooldown <= 0:
@@ -405,12 +387,12 @@ try:
         if player['xp'] >= 200 + (100 * player['level']):
             player['level'] += 1
             player['maxhp'] += 100
-            player['hp'] = maxhp
+            player['hp'] = player['maxhp']
             player['maxmp'] += 100
-            player['mp'] += int(maxmp/2)
-            if player['mp'] > maxmp:
-                player['mp'] = maxmp
-            player['xp'] = 0
+            player['mp'] += int(player['maxmp']/2)
+            if player['mp'] > player['maxmp']:
+                player['mp'] = player['maxmp']
+            player['xp'] -= 200 + (100 * (player['level'] - 1))
         
         while stage == 'pause': #Pausimenüü.
             for k in event.get():
