@@ -193,9 +193,40 @@ def näitastaatust(statistika):
         aken.blit(font['40'].render('HP: '+str(player['hp'])+'/'+str(player['maxhp']), 1, [0, 0, 0]), [210, 5])
         aken.blit(font['40'].render('MP: '+str(player['mp'])+'/'+str(player['maxmp']), 1, [0, 0, 0]), [210, 28])
 
+def loeSätted(failinimi = 'Settings.txt'):
+    file = open(failinimi, 'r', encoding='UTF-8')
+    sätted = {}
+    for row in file:
+        rida = row.strip('\n').split(': ')
+        sätted[rida[0]] = int(rida[1])
+    file.close()
+    return sätted
+
+def looSätted():
+    #Lugemine
+    try:
+        loeSätted()
+    except:
+        sätted = {'Akna laius': 900, 'Akna pikkus': 900}
+    #Kirjutamine
+    file = open('Settings.txt', 'w', encoding='UTF-8')
+    esimene = True
+    for säte, väärtus in sätted.items():
+        if esimene:
+            esimene = False
+        else:
+            file.write('\n')
+        file.write(säte+': '+str(väärtus))
+    file.close()
+    
 init()
-x_suurus = 900
-y_suurus = 900
+try:
+    settings = loeSätted()
+except:
+    looSätted()
+    settings = loeSätted()
+x_suurus = settings['Akna laius'] #Miinimum mõlema suuruse puhul on 500.
+y_suurus = settings['Akna pikkus']
 aken = display.set_mode([x_suurus, y_suurus])
 display.set_caption('RPG')
 display.set_icon(image.load('icon.png'))
