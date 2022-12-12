@@ -261,8 +261,8 @@ try:
             for i in range(vaenlastearv):
                 genereeritu = copy(enemylist[random.randint(0,len(enemylist)-1)])
                 while True: #Positsiooni genereerimine: positsioon ei tohi olla teise mängija ega venlase lähedal.
-                    gen_x = random.randint(50, x_suurus - 50)
-                    gen_y = random.randint(50, y_suurus - 50 - genereeritu.pilt.get_height())
+                    gen_x = random.randint(20, x_suurus - 20 - genereeritu.pilt.get_width())
+                    gen_y = random.randint(20, y_suurus - 20 - genereeritu.pilt.get_height())
                     if ((gen_x < (player['x'] - 100)) or (gen_x > (player['x'] + 100))) and ((gen_y < (player['y'] - 100)) or (gen_y > (player['y'] + 100))):
                         allowed = True
                         if len(noPosition) > 0:
@@ -402,7 +402,8 @@ try:
             if cooldown > 0:
                 cooldown -= 1
             if aktiivne == 0:
-                aken.blit(font['40'].render(text, 1, [0, 0, 0]), [10, 750])
+                textdisplay = font['40'].render(text, 1, [0, 0, 0])
+                aken.blit(textdisplay, [int(x_suurus/2 - textdisplay.get_width()/2), int(y_suurus - textdisplay.get_height() - 20)])
                 display.flip()
                 time.delay(3000)
                 continue
@@ -411,8 +412,9 @@ try:
                 stage = 'overworld'
             aken.fill([255,255,255]) #Täidan ekraani valgega (RGB koodiga), et pilt endast jälgi maha ei jätaks.
             if aktiivne.hp > 0:
-                aken.blit(vaenlane.pilt, [int(900/2-55/2), int(900/2-84/2)])
-            aken.blit(font['40'].render(text, 1, [0, 0, 0]), [10, 700])
+                aken.blit(vaenlane.pilt, [int(x_suurus/2-55/2), int(y_suurus/2-84/2)])
+            textdisplay = font['40'].render(text, 1, [0, 0, 0])
+            aken.blit(textdisplay, [int(x_suurus/2 - textdisplay.get_width()/2), int(y_suurus - textdisplay.get_height() - 20)])
             if player['hp'] > player['maxhp']:
                 player['hp'] = player['maxhp']
             näitastaatust(1)
@@ -422,7 +424,8 @@ try:
                 time.delay(3000)
                 if player['xp'] >= 200 + (100 * player['level']):
                     text = 'Su level tõusis! Su level on nüüd '+str(player['level'] + 1)+'!'
-                    aken.blit(font['40'].render(text, 1, [0, 0, 0]), [10, 750])
+                    textdisplay = font['40'].render(text, 1, [0, 0, 0])
+                    aken.blit(textdisplay, [int(x_suurus/2 - textdisplay.get_width()/2), int(y_suurus - textdisplay.get_height() - 20)])
                     display.flip() #Uuendan ekraani.
                     time.delay(3000)
                 turn = 1
