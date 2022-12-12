@@ -227,8 +227,12 @@ except:
     settings = loeSätted()
 x_suurus = settings['Akna laius'] #Miinimum mõlema suuruse puhul on 500.
 y_suurus = settings['Akna pikkus']
+if x_suurus < 500: #Kui on sätitud väiksemaks kui 500, siis selleks, et mäng ei jookseks kohe kokku, sätitakse ekraani suurus 500 peale.
+    x_suurus = 500
+if y_suurus < 500:
+    y_suurus = 500
 aken = display.set_mode([x_suurus, y_suurus])
-display.set_caption('RPG')
+display.set_caption('Projekt Pime: RPG')
 display.set_icon(image.load('icon.png'))
 font = {'80': font.Font(None, 80), '40': font.Font(None, 40)}
 player = {'x': int(x_suurus/2), 'y': int(y_suurus-100), 'kiirus_x': 0, 'kiirus_y': 0, 'hp': 200, 'maxhp': 200, 'mp': 100, 'maxmp': 100, 'xp': 0, 'level': 1, 'pilt': image.load('Pildid/Kuju.png')}
@@ -346,6 +350,18 @@ try:
                             player['kiirus_x'] = 0
                             player['kiirus_y'] = 0
                             text = str(vaenlane.nimi+' ründab!')
+            if player['x'] >= x_suurus: #Kui mängija läheb ekraanist välja, siis tuleb teha "uus ala"
+                stage = 'loading'
+                player['x'] = 0 - player['pilt'].get_width() + 1
+            elif player['x'] + player['pilt'].get_width() <= 0:
+                stage = 'loading'
+                player['x'] = x_suurus - 1
+            if player['y'] >= y_suurus:
+                stage = 'loading'
+                player['y'] = 0 - player['pilt'].get_height() + 1
+            elif player['y'] + player['pilt'].get_height() <= 0:
+                stage = 'loading'
+                player['y'] = y_suurus - 1
             aken.blit(player['pilt'], [player['x'], player['y']])
             näitastaatust(0)
             display.flip()
