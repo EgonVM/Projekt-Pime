@@ -231,6 +231,7 @@ if x_suurus < 500: #Kui on sätitud väiksemaks kui 500, siis selleks, et mäng 
     x_suurus = 500
 if y_suurus < 500:
     y_suurus = 500
+nupud = {'Ava': StrButton('Ava')}
 aken = display.set_mode([x_suurus, y_suurus])
 display.set_caption('Projekt Pime: RPG')
 display.set_icon(image.load('icon.png'))
@@ -251,9 +252,19 @@ enemylist = [Vaenlane('Vaenlane', 100, 100, 'kerge', image.load('Pildid/Vaenlane
 try:
     while game:
         while stage == 'menu': #Avamenüü pärast mängu käivitamist või sinna väljumist.
+            hiire_x, hiire_y = mouse.get_pos()
             for k in event.get():
                 if k.type == QUIT: #Kui vajutad ristist kinni, läheb mäng kinni.
                     stage = 'quit'
+                if k.type == MOUSEBUTTONDOWN:
+                    isclicked = True
+                if k.type == MOUSEBUTTONUP:
+                    if nupud['Ava'].do(hiire_x, hiire_y, x_suurus/2, y_suurus/2, 50):
+                        stage = 'loading'
+                    isclicked = False
+            nupud['Ava'].place(aken, hiire_x, hiire_y, x_suurus/2, y_suurus/2)
+            display.flip()
+            time.delay(5)
         
         while stage == 'loading': #Kui jäetakse mäng varem pooleli ja siis tahetakse sealt jätkata.
             vaenlased = []
